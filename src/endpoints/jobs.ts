@@ -25,9 +25,9 @@ export type JobsEstimateRequest = {
 }
 
 export type JobsEstimateResponse = {
-  pickup: Location
-  stops?: Location[]
-  drop: Location
+  pickup: LocationResponse
+  stops?: LocationResponse[]
+  drop: LocationResponse
   price_net: number
   price: number
   duration_min: number
@@ -58,9 +58,9 @@ export type JobsConfirmRequest = {
 export type JobsConfirmResponse = {
   id: string
   number: number
-  pickup: Location
-  stops?: Location[]
-  drop: Location
+  pickup: LocationResponse
+  stops?: LocationResponse[]
+  drop: LocationResponse
   price_net: number
   price: number
   delay: number

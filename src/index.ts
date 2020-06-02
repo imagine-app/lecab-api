@@ -6,7 +6,37 @@ import JobsAPIClient from "./endpoints/jobs"
 import ServerAPIClient from "./endpoints/server"
 import ProfilesAPIClient from "./endpoints/profiles"
 
-type APIClientParams =
+// re-export all types
+export * from "./models"
+export {
+  LocationSearchRequest,
+  LocationSearchResponse,
+  LocationsPresetRequest,
+} from "./endpoints/locations"
+export {
+  ServicesAvailableRequest,
+  ServicesAvailableResponse,
+  ServicesEstimateRequest,
+  ServicesEstimateResponse,
+} from "./endpoints/services"
+export {
+  JobsCancelRequest,
+  JobsCancelResponse,
+  JobsConfirmRequest,
+  JobsConfirmResponse,
+  JobsDetailRequest,
+  JobsDetailResponse,
+  JobsEstimateRequest,
+  JobsEstimateResponse,
+  JobsHistoryRequest,
+  JobsHistoryResponse,
+  JobsSearchRequest,
+  JobsSearchResponse,
+} from "./endpoints/jobs"
+export { ServerStatusResponse } from "./endpoints/server"
+export { ProfilesSettingsResponse } from "./endpoints/profiles"
+
+export type APIClientParams =
   | RESTClient
   | ({
       subdomain: LeCabSubdomain
