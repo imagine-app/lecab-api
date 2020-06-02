@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios"
-import { RESTClient } from "./RESTClient"
+import { RESTClient, LeCabCredentials } from "./RESTClient"
 
 export type LeCabSubdomain = "testapi" | "api"
 export type LeCabVersion = "release"
@@ -9,13 +9,17 @@ export class AxiosClient implements RESTClient {
 
   constructor(
     subdomain: string,
-    apiKey: string,
+    credentials: LeCabCredentials,
     version: LeCabVersion = "release",
   ) {
+    const authorizationHeader: string =
+      typeof credentials["apiKey"] === "string"
+        ? `X-Api-Key ${credentials["apiKey"]}`
+        : `Bearer ${credentials["oauthCustomertoken"]}`
     this.client = axios.create({
       baseURL: `https://${subdomain}.mysam.fr/${version}`,
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: authorizationHeader,
       },
     })
   }

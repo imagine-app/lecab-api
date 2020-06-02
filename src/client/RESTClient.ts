@@ -1,3 +1,7 @@
+export type LeCabCredentials =
+  | { apiKey: string }
+  | { oauthCustomertoken: string }
+
 export type RESTClient = {
   get<T>(path: string, params?: any): Promise<T>
   post<T>(path: string, params?: any): Promise<T>
