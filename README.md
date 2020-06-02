@@ -1,4 +1,4 @@
-# An API client for [eCab]
+# An API client for [LeCab]
 
 A TypeScript/Javascript API client for the [LeCab] API.
 
@@ -20,6 +20,135 @@ $ yarn add lecab-api
 ```
 
 ### Usage
+
+Below is a sample test script, using the test API Key available on the [official OpenAPI documentation](https://www.lecab.fr/api-documentation.html):
+
+```typescript
+import APIClient, { hasGPSCoordinate } from "lecab-api"
+import { AxiosError } from "axios"
+
+const sleep = (delay: number) =>
+  new Promise((resolve) => setTimeout(resolve, delay))
+
+async function main() {
+  const lecab = new APIClient({
+    subdomain: "testapi",
+    apiKey: "89696335d20acc59d7060642ba312cc6",
+  })
+
+  console.log(`Checking server status`)
+  const status = await lecab.server.status()
+  console.log(`status: ${status.online ? "ONLINE" : "OFFLINE"}`)
+
+  console.log(`Loading server config`)
+  const config = await lecab.profiles.settings()
+  console.log(`available services =`, config.services.join(", "))
+  console.log(`accepted payments =`, config.payments.join(", "))
+
+  const address = "22 rue du pont neuf 75001"
+  console.log(`Searching for location: ${address}`)
+  const { locations } = await lecab.locations.search({
+    location: { address },
+  })
+  const filteredLocations = locations
+    .filter((location) => location.type === "LEAF")
+    .filter(hasGPSCoordinate)
+  if (filteredLocations.length === 0) {
+    throw new Error("Could not find location")
+  }
+  for (const location of filteredLocations) {
+    console.log(
+      ` - found location: ${location.address} (${location.type}) @(${location.latitude}, ${location.longitude})`,
+    )
+  }
+  const location = filteredLocations[0]
+
+  console.log(`Searching services available at this location`)
+  const services = await lecab.services.available({
+    location: {
+      latitude: location.latitude,
+      longitude: location.longitude,
+    },
+  })
+  console.log(`services: ${services.services.join(", ")}`)
+
+  console.log(`Estimating the booking (${services.services[0]})`)
+  const estimation = await lecab.jobs.estimate({
+    pickup: {
+      latitude: location.latitude,
+      longitude: location.longitude,
+    },
+    drop: {
+      latitude: 48.8703743,
+      longitude: 2.3160687,
+    },
+    service: services[0],
+  })
+  console.log(`reçu estimation #${estimation.estimate_id}`)
+  console.log(`attente: ${estimation.delay}m`)
+  console.log(
+    `durée: entre ${estimation.duration_min}m et ${estimation.duration_max}m`,
+  )
+  console.log(`prix: ${estimation.price}€ (${estimation.price_net}HT)`)
+
+  console.log(`Confirming the booking`)
+  const booking = await lecab.jobs.confirm({
+    estimate_id: estimation.estimate_id,
+    contacts: {
+      global: {
+        firstname: "Aurélien",
+        lastname: "Noce",
+        phone: "0650228354",
+      },
+    },
+    payment: {
+      type: "CASH_AT_DROP",
+    },
+  })
+  console.log(`Course N°${booking.number} (${booking.id}) confirmed`)
+
+  await sleep(2000)
+
+  console.log(`Refreshing course info`)
+  let courseInfo = await lecab.jobs.detail({
+    id: booking.id,
+  })
+  console.log(JSON.stringify(courseInfo, null, 2))
+
+  await sleep(2000)
+
+  console.log(`Refreshing course info`)
+  courseInfo = await lecab.jobs.detail({
+    id: booking.id,
+  })
+  console.log(JSON.stringify(courseInfo, null, 2))
+
+  await sleep(2000)
+
+  console.log(`Canceling the booking`)
+  const cancelationStatus = await lecab.jobs.cancel({
+    id: booking.id,
+  })
+  if (cancelationStatus.type === "CHARGE") {
+    console.log(`Cancelation did cost ${cancelationStatus.charge}€`)
+  } else {
+    console.log(`Cancelation was FREE`)
+  }
+}
+
+main().catch((error) => {
+  const axiosError = error as AxiosError
+  if (axiosError.response) {
+    console.warn(JSON.stringify(error.response.data, null, 2))
+  }
+})
+```
+
+# TODO
+
+- [ ] Add support for the `oauth` endpoint
+- [ ] Add detailled docs
+- [ ] Write some tests (?)
 
 [lecab]: https://www.lecab.fr/
 [typescript]: https://www.typescriptlang.org/
