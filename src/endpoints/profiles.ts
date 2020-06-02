@@ -16,7 +16,7 @@ export type ProfilesSettingsResponse = {
 export default class ProfilesAPIClient {
   constructor(private client: RESTClient) {}
 
-  status() {
-    return this.client.get<ProfilesSettingsResponse>("/server/status")
+  settings() {
+    return this.client.get<ProfilesSettingsResponse>("/profiles/settings")
   }
 }

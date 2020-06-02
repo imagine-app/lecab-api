@@ -1,11 +1,21 @@
 import { GPSCoordinate } from "./GPSCoordinate"
 
-export type LocationResponse = {
+type LocationResponseBase = {
   id?: string
   address: string
   name?: string
-} & Type &
-  OptionalGPSCoordinates
+} & Type
+
+export type LocationResponse = LocationResponseBase & OptionalGPSCoordinates
+
+export type LocationResponseWithCoordinate = LocationResponseBase &
+  GPSCoordinate
+
+export const hasGPSCoordinate = (
+  locationResponse: LocationResponse,
+): locationResponse is LocationResponseWithCoordinate => {
+  return locationResponse["latitude"] && locationResponse["longitude"]
+}
 
 type Type =
   | { type: "LEAF" }

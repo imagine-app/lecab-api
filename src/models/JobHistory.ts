@@ -7,7 +7,7 @@ import { Contacts } from "./Contact"
 export type JobHistory = {
   id: string
   status: JobStatus
-  number: number
+  number: string
   date: Date
   pickup: LocationResponse
   drop: LocationResponse

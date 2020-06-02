@@ -46,7 +46,7 @@ export type JobsConfirmRequest = {
   contacts: Contacts
   passengers?: Contact[]
   notes?: Notes
-  references: {
+  references?: {
     [reference_name: string]: any
   }
   transports?: {
@@ -57,7 +57,7 @@ export type JobsConfirmRequest = {
 
 export type JobsConfirmResponse = {
   id: string
-  number: number
+  number: string
   pickup: LocationResponse
   stops?: LocationResponse[]
   drop: LocationResponse
@@ -140,6 +140,6 @@ export default class JobsAPIClient {
   }
 
   search(request: JobsSearchRequest) {
-    return this.client.post<JobsSearchResponse>("/jobs/history", request)
+    return this.client.post<JobsSearchResponse>("/jobs/search", request)
   }
 }

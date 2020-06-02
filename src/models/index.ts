@@ -5,7 +5,11 @@ export { GPSCoordinate } from "./GPSCoordinate"
 export { JobHistory } from "./JobHistory"
 export { JobStatus } from "./JobStatus"
 export { LocationRequest } from "./LocationRequest"
-export { LocationResponse } from "./LocationResponse"
+export {
+  LocationResponse,
+  LocationResponseWithCoordinate,
+  hasGPSCoordinate,
+} from "./LocationResponse"
 export { Notes } from "./Notes"
 export { PaymentDatas } from "./PaymentDatas"
 export { PaymentType } from "./PaymentType"

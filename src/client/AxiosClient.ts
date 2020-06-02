@@ -17,7 +17,7 @@ export class AxiosClient implements RESTClient {
         ? `X-Api-Key ${credentials["apiKey"]}`
         : `Bearer ${credentials["oauthCustomertoken"]}`
     this.client = axios.create({
-      baseURL: `https://${subdomain}.mysam.fr/${version}`,
+      baseURL: `https://${subdomain}.lecab.fr/${version}`,
       headers: {
         Authorization: authorizationHeader,
       },
